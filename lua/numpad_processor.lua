@@ -67,13 +67,47 @@ local function process(key, env)
     return ACCEPT
   end
 
-  -- 主键盘数字：永远是普通数字；组码中按下则放弃当前编码
+  -- 主键盘数字：有候选时选词，没有候选时是普通数字
   if kc >= 0x30 and kc <= 0x39 then
+    local n = kc - 0x30
+
+    -- Shift+数字：保持 ASCII 符号（! @ # ...）
+    if key:shift() then
+      local ch = SHIFT_DIGIT[tostring(n)] or tostring(n)
+      if ctx:is_composing() then ctx:clear() end
+      last_mode = "en"
+      env.engine:commit_text(ch)
+      return ACCEPT
+    end
+
+    -- 有候选菜单：1-9 选当前页，0 选第 10 个
+    if ctx:has_menu() then
+      local comp = ctx.composition
+      local seg = nil
+      if comp and not comp:empty() then
+        seg = comp:back()
+      end
+      local menu = seg and seg.menu
+      if menu and not menu:empty() then
+        local size = env.engine.schema.config:get_int("menu/page_size")
+        if not size or size <= 0 then size = 10 end
+        local idx = (n + 9) % 10  -- 1->0, ..., 9->8, 0->9
+        if idx < size then
+          local sel = seg.selected_index or 0
+          local page_start = math.floor(sel / size) * size
+          ctx:select(page_start + idx)
+          last_mode = "zh"
+          return ACCEPT
+        end
+        -- 超出当前页，消费掉这个数字，避免它又被当成普通数字
+        return ACCEPT
+      end
+    end
+
+    -- 没有候选：普通数字；组码中按下则放弃当前编码
     last_mode = "en"
-    local ch = tostring(kc - 0x30)
-    if key:shift() then ch = SHIFT_DIGIT[ch] or ch end
     if ctx:is_composing() then ctx:clear() end
-    env.engine:commit_text(ch)
+    env.engine:commit_text(tostring(n))
     return ACCEPT
   end
 
