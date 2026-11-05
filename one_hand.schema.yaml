@@ -1,7 +1,7 @@
 # Rime 单手笔顺输入法 3.0 版，一善鱼 YQ-YSY <YQ-YSY@163.com>
 # 单手笔顺输入法（3.0 Rime版）软件，开源网址： https://gitee.com/yq-ysy/one-hand_-rime 或 https://github.com/YQ-YSY/one-hand_Rime
 # 单手笔顺输入法（3.0版）TXT码表，开源网址： https://gitee.com/yq-ysy/one-hand_code 或 https://github.com/YQ-YSY/stroke-seq_MB
-# 编码 utf-8 
+# 编码 utf-8
 # 使用 UNIX 换行符（LF）
 # 鉴于一些文本编辑器会为 UTF-8 编码的文件添加 BOM 标记，为了防止误将该字符混入文中， 不要从文件的第一行开始正文，而请在该行行首以 # 记号起一行注释
 # one_hand.schema.yaml 配制
@@ -14,21 +14,23 @@ schema:                    # 概要
   version: "3.0"           # 版本号，在发布新版前请确保已更新此版本号，最好加引号表明是字符串
   author:                  # 作者、发明人、撰写者。如果您使用别人方案做出了修改，请保留原作者的信息，并将自己的名字加在后面
     - 一善鱼 <yq-ysy@163.com>
+    - EK5606 <enki9092@gmail.com>
   description: |           # 注释，如果本方案依赖于其它方案，请在此说明（通常用于反向查询所依赖的其它方案，或着是说明两种或多种方案在同时使用）
     使用Rime平台的单手笔顺输入方案。
 
 engine:                    # 输入引擎设定，即挂接组件的“处方”，引擎分四组：
   processors:              # 一、处理器，这批组件处理各类按键消息
-    - ascii_composer       # ※ 处理英文模式及中英文切换
-    - recognizer           # ※ （可精细配置）与 matcher 搭配，处理符合特定规则的输入码，如网址、反查等
-    - key_binder           # ※ （可精细配置）在特定条件下将按键绑定到其他按键，如重定义逗号、句号爲候选翻页键
-    - speller              # ※ （可精细配置）拼写处理器，接受字符按键，编辑输入码
-    - punctuator           # ※ （可精细配置）句读处理器，将单个字符按键直接映射爲文字符号
-    - selector             # ※ 选字处理器，处理数字选字键、上、下候选定位、换页键
-    - navigator            # ※ 处理输入栏内的光标移动键
-    - express_editor       # ※ 编辑器，处理空格、回车上屏、回退键等
-#    - fluid_editor         # ※ （不常用）句式编辑器，用于以空格断词、回车上屏的【注音】、【语句流】等输入方案，替换 express_editor，也可以写作 fluency_editor
-#    - chord_composer       # ※ （不常用）和弦作曲家或曰并击处理器，用于【宫保拼音】等多键并击的输入方案
+    - lua_processor@*numpad_processor        # KP小键盘与正常字符过滤
+    - ascii_composer                         # ※ 处理英文模式及中英文切换
+    - recognizer                             # ※ （可精细配置）与 matcher 搭配，处理符合特定规则的输入码，如网址、反查等
+    - key_binder                             # ※ （可精细配置）在特定条件下将按键绑定到其他按键，如重定义逗号、句号爲候选翻页键
+    - speller                                # ※ （可精细配置）拼写处理器，接受字符按键，编辑输入码
+    - punctuator                             # ※ （可精细配置）句读处理器，将单个字符按键直接映射爲文字符号
+    - selector                               # ※ 选字处理器，处理数字选字键、上、下候选定位、换页键
+    - navigator                              # ※ 处理输入栏内的光标移动键
+    - express_editor                         # ※ 编辑器，处理空格、回车上屏、回退键等
+                                             #    - fluid_editor         # ※ （不常用）句式编辑器，用于以空格断词、回车上屏的【注音】、【语句流】等输入方案，替换 express_editor，也可以写作 fluency_editor
+                                             #    - chord_composer       # ※ （不常用）和弦作曲家或曰并击处理器，用于【宫保拼音】等多键并击的输入方案
   segmentors:              # 二、分割器，这批组件识别不同内容类型，将输入码分段並加上标签
     - ascii_segmentor      # ※ 标识英文段落（例如在英文模式下）字母直接上屛
     - matcher              # ※ 配合recognizer标识符合特定规则的段落，如网址、反查等，加上特定标签
@@ -60,8 +62,8 @@ translator:                # 编码翻译器（注意不要与转译器弄混，
 
 #second_translator:
 #  dictionary: one_hand_2   # 用于 script_translator 的无编码字典，可实现词组的每个字不限定输入的编码数。但此功能不完善。
-#  enable_user_dict: false 
-#  strict_spelling: true 
+#  enable_user_dict: false
+#  strict_spelling: true
 #  initial_quality: 1       # 提高它的优先级
 
 speller:                   # 拼写处理器
@@ -83,17 +85,7 @@ speller:                   # 拼写处理器
 key_binder:                # 键盘绑定器
   bindings:                # 键盘绑定，设置功能性快捷键，每一条binding可能包含：accept实际所按之键、send输出效果、toggle切换开关和when作用范围（send和toggle二选一），
                            # when可用字段包含：paging翻页用，has_menu操作候选项用，composing操作输入码用，always全域总是使用。
-# # # 单手笔顺输入法用小键盘的数字键输入数字，即映射为字母大键盘的数字键
-    - {accept: KP_0, send: 0, when: always}
-    - {accept: KP_1, send: 1, when: always}
-    - {accept: KP_2, send: 2, when: always}
-    - {accept: KP_3, send: 3, when: always}
-    - {accept: KP_4, send: 4, when: always}
-    - {accept: KP_5, send: 5, when: always}
-    - {accept: KP_6, send: 6, when: always}
-    - {accept: KP_7, send: 7, when: always}
-    - {accept: KP_8, send: 8, when: always}
-    - {accept: KP_9, send: 9, when: always}
+# # # 单手笔顺输入法用小键盘的数字键输入数字，由lua_processor@*numpad_processor处理，能同时保留正常数字和小键盘数字
 
 # # # 单手笔顺输入法用小键盘回车确认输入，即映射为空格键，能让数字编码变汉字上屏，单独输入时仍为回车换行。如果系统不认 KP_Enter，需要改为 Return。
     - {accept: KP_Enter, send: space, when: has_menu}
@@ -113,7 +105,7 @@ key_binder:                # 键盘绑定器
 # # # 原本想使用小键盘“*”乘号（星号）作为模糊查询，匹配字词，这样能大大加快输入的速度，可惜不知道应该如何实现，有兴趣的朋友帮忙研究一下
 
 punctuator:                # 句读处理器，
-  import_preset: default   # 调用 default 默认的文件配置，能使用大键盘打出中文标点符号，字母依然是英文（再也不需要按 Shift 键切换中英文状态了）。
+  import_preset: default   # 非组码时主键盘标点走 ASCII，组码时走中文标点；小键盘 / 和 . 始终是中文逗号/句号。
 
 #menu:
 #  page_size: 10             # 候选字每页显示个数，最多10个，在default.custom.yaml文件有相同的设置，不要在此修改。
