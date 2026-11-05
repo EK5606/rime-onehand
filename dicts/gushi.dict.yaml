@@ -4,12 +4,12 @@
 # 编码 utf-8
 # 使用 UNIX 换行符（LF）
 # 鉴于一些文本编辑器会为 UTF-8 编码的文件添加 BOM 标记，为了防止误将该字符混入文中， 不要从文件的第一行开始正文，而请在该行行首以 # 记号起一行注释
-# one_hand.gushi.dict.yaml 古诗词
+# gushi.dict.yaml 古诗词
 # 这是单手笔顺输入法的“子词典”文件，在 Rime 中需要使用 one_hand.schema.yaml 和 one_hand.dict.yaml 文件调用本文件。
 # 该文件由一善鱼 YQ-YSY <YQ-YSY@163.com> 整理，含有六全码和精简码。
 
 ---
-name: one_hand.gushi            # 字典名称，确保与字典文件前端名称一致
+name: gushi            # 字典名称，确保与字典文件前端名称一致
 version: "3.0"                 # 版本号
 use_preset_vocabulary: ture    # 是否使用用户预设词汇
 sort: by_weight                # 字典初始排序，可选original或by_weight，by_weight 意图是不以码表的顺序排列重码字，而是比较字频。

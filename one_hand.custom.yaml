@@ -14,5 +14,5 @@ patch:
   'style/horizontal': false                    # 候选字浮动栏，横排 true 是， false 否（默认竖排）
   'style/font_face': '微软雅黑'             # 字体名称，从记事本等软件的系統字体对话框里能看到
   'style/font_point': 14                      # 字号，只认数字，不认「五号、小五」
-  schema/icon: 单手笔顺输入法_LOGO-color_100x100.ico       # 启用输入法时Windows任务栏显示的中文图标
-  schema/ascii_icon: 英文状态_LOGO-cyan_100x100.ico       # 不启用输入法时Windows任务栏显示的英文图标
+  schema/icon: assets/单手笔顺输入法_LOGO-color_100x100.ico       # 启用输入法时Windows任务栏显示的中文图标
+  schema/ascii_icon: assets/英文状态_LOGO-cyan_100x100.ico       # 不启用输入法时Windows任务栏显示的英文图标
