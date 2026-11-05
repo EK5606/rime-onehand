@@ -43,6 +43,16 @@ local function process(key, env)
   local ctx = env.engine.context
   local kc = key.keycode
 
+  -- 忽略 release 事件，否则 press/release 会各上屏一次
+  if key:release() then
+    return NOOP
+  end
+
+  -- ASCII 模式交给 ascii_composer
+  if ctx:get_option("ascii_mode") then
+    return NOOP
+  end
+
   -- Ctrl/Alt/Super 组合交给系统或后续组件
   if key:ctrl() or key:alt() or key:super() then
     return NOOP
@@ -95,10 +105,6 @@ local function process(key, env)
     return ACCEPT
   end
 
-  -- ASCII 模式交给 ascii_composer，KP 数字不再组中文码
-  if ctx:get_option("ascii_mode") then
-    return NOOP
-  end
   return NOOP
 end
 
