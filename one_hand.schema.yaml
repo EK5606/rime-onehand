@@ -26,11 +26,6 @@ switches:
     states: [数字码, 笔画]
     reset: 1
 
-# 右 Shift 不要被 ascii_composer 吃掉，交给 schema_cycler
-ascii_composer:
-  switch_key:
-    Shift_R: noop
-
 engine:                    # 输入引擎设定，即挂接组件的“处方”，引擎分四组：
   processors:              # 一、处理器，这批组件处理各类按键消息
     - lua_processor@*numpad_processor        # KP小键盘与正常字符过滤
@@ -42,7 +37,6 @@ engine:                    # 输入引擎设定，即挂接组件的“处方”
     - selector                               # ※ 选字处理器，处理数字选字键、上、下候选定位、换页键
     - navigator                              # ※ 处理输入栏内的光标移动键
     - express_editor                         # ※ 编辑器，处理空格、回车上屏、回退键等
-    - lua_processor@*schema_cycler           # 右 Ctrl/Shift 直接切下一个方案
                                              #    - fluid_editor         # ※ （不常用）句式编辑器，用于以空格断词、回车上屏的【注音】、【语句流】等输入方案，替换 express_editor，也可以写作 fluency_editor
                                              #    - chord_composer       # ※ （不常用）和弦作曲家或曰并击处理器，用于【宫保拼音】等多键并击的输入方案
   segmentors:              # 二、分割器，这批组件识别不同内容类型，将输入码分段並加上标签
@@ -108,10 +102,6 @@ key_binder:                # 键盘绑定器
   bindings:                # 键盘绑定，设置功能性快捷键，每一条binding可能包含：accept实际所按之键、send输出效果、toggle切换开关和when作用范围（send和toggle二选一），
                            # when可用字段包含：paging翻页用，has_menu操作候选项用，composing操作输入码用，always全域总是使用。
 # # # 单手笔顺输入法用小键盘的数字键输入数字，由lua_processor@*numpad_processor处理，能同时保留正常数字和小键盘数字
-
-# # # 右 Ctrl/Shift 转成 F24，交给 schema_cycler 直接切下一个方案
-    - {accept: "Control+Shift_R", send: F24, when: always}
-    - {accept: "Shift+Control_R", send: F24, when: always}
 
 # # # 单手笔顺输入法用小键盘回车确认输入，即映射为空格键，能让数字编码变汉字上屏，单独输入时仍为回车换行。如果系统不认 KP_Enter，需要改为 Return。
     - {accept: KP_Enter, send: space, when: has_menu}
