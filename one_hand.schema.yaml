@@ -64,7 +64,7 @@ engine:                    # 输入引擎设定，即挂接组件的“处方”
     - lua_filter@*stroke_preedit  # ※ 开关 stroke_display：把数字码显示成笔画
     - uniquifier           # ※ 过滤重複的候选字，有可能来自simplifier繁简转换
     - cjk_minifier         # ※ 字符集过滤〔用于script_translator，使之支援extended_charset开关〕
-    - reverse_lookup_filter@one_hand_reverse  # 候选注释显示完整笔顺码
+    - reverse_lookup_filter  # ※ （可精细配置）反查滤镜，以更灵活的方式反查，Rime1.0后替代reverse_lookup_translator，此项可加载多个实例，后接@+滤镜名（如：pinyin_lookup、jyutping_lookup等）
     - single_char_filter   # ※ （可精细配置）单字过滤器，如加载此组件，则屛敝词典中的词组（仅table_translator有效）
 
 # # # 以下设置可参考文档 https://github.com/LEOYoon-Tsaw/Rime_collections/blob/master/Rime_description.md
@@ -74,14 +74,6 @@ emoji:
   opencc_config: emoji.json
   tips: none
   inherit_comment: false
-
-# 候选注释里显示这个字的完整笔顺码（最长码），并转成笔画字符
-one_hand_reverse:
-  tags: [abc]
-  overwrite_comment: false
-  dictionary: one_hand_reverse
-  comment_format:
-    - "xlit/0123456789/乛一丨丿丶乛丶一丨丿/"
 
 translator:                # 编码翻译器（注意不要与转译器弄混，少了一个s）
 # # # 单手笔顺输入法的词典：单字近3万个，核心词汇36万个，扩展词汇（可选）243万个，含精简码、六全码。
