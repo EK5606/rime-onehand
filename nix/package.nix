@@ -17,7 +17,7 @@ stdenvNoCC.mkDerivation {
     runHook preInstall
 
     mkdir -p $out/share/rime-data
-    install -m644 one_hand.schema.yaml one_hand.dict.yaml $out/share/rime-data/
+    install -m644 one_hand.schema.yaml one_hand.dict.yaml one_hand_reverse.dict.yaml $out/share/rime-data/
     cp -r dicts $out/share/rime-data/dicts
     cp -r lua $out/share/rime-data/lua
     cp -r opencc $out/share/rime-data/opencc

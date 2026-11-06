@@ -22,6 +22,14 @@ switches:
   - name: emoji
     states: [表情关, 表情开]
     reset: 1
+  - name: stroke_display
+    states: [数字码, 笔画]
+    reset: 1
+
+# 右 Shift 不要被 ascii_composer 吃掉，交给 schema_cycler
+ascii_composer:
+  switch_key:
+    Shift_R: noop
 
 engine:                    # 输入引擎设定，即挂接组件的“处方”，引擎分四组：
   processors:              # 一、处理器，这批组件处理各类按键消息
@@ -34,6 +42,7 @@ engine:                    # 输入引擎设定，即挂接组件的“处方”
     - selector                               # ※ 选字处理器，处理数字选字键、上、下候选定位、换页键
     - navigator                              # ※ 处理输入栏内的光标移动键
     - express_editor                         # ※ 编辑器，处理空格、回车上屏、回退键等
+    - lua_processor@*schema_cycler           # 右 Ctrl/Shift 直接切下一个方案
                                              #    - fluid_editor         # ※ （不常用）句式编辑器，用于以空格断词、回车上屏的【注音】、【语句流】等输入方案，替换 express_editor，也可以写作 fluency_editor
                                              #    - chord_composer       # ※ （不常用）和弦作曲家或曰并击处理器，用于【宫保拼音】等多键并击的输入方案
   segmentors:              # 二、分割器，这批组件识别不同内容类型，将输入码分段並加上标签
@@ -52,9 +61,10 @@ engine:                    # 输入引擎设定，即挂接组件的“处方”
   filters:                 # 四、过滤器，这批组件过滤翻译的结果
     - simplifier           # ※ （可精细配置）繁简转换
     - simplifier@emoji     # ※ 表情符号候选（开关 emoji）
+    - lua_filter@*stroke_preedit  # ※ 开关 stroke_display：把数字码显示成笔画
     - uniquifier           # ※ 过滤重複的候选字，有可能来自simplifier繁简转换
     - cjk_minifier         # ※ 字符集过滤〔用于script_translator，使之支援extended_charset开关〕
-    - reverse_lookup_filter  # ※ （可精细配置）反查滤镜，以更灵活的方式反查，Rime1.0后替代reverse_lookup_translator，此项可加载多个实例，后接@+滤镜名（如：pinyin_lookup、jyutping_lookup等）
+    - reverse_lookup_filter@one_hand_reverse  # 候选注释显示完整笔顺码
     - single_char_filter   # ※ （可精细配置）单字过滤器，如加载此组件，则屛敝词典中的词组（仅table_translator有效）
 
 # # # 以下设置可参考文档 https://github.com/LEOYoon-Tsaw/Rime_collections/blob/master/Rime_description.md
@@ -64,6 +74,14 @@ emoji:
   opencc_config: emoji.json
   tips: none
   inherit_comment: false
+
+# 候选注释里显示这个字的完整笔顺码（最长码），并转成笔画字符
+one_hand_reverse:
+  tags: [abc]
+  overwrite_comment: false
+  dictionary: one_hand_reverse
+  comment_format:
+    - "xlit/0123456789/乛一丨丿丶乛丶一丨丿/"
 
 translator:                # 编码翻译器（注意不要与转译器弄混，少了一个s）
 # # # 单手笔顺输入法的词典：单字近3万个，核心词汇36万个，扩展词汇（可选）243万个，含精简码、六全码。
@@ -99,8 +117,9 @@ key_binder:                # 键盘绑定器
                            # when可用字段包含：paging翻页用，has_menu操作候选项用，composing操作输入码用，always全域总是使用。
 # # # 单手笔顺输入法用小键盘的数字键输入数字，由lua_processor@*numpad_processor处理，能同时保留正常数字和小键盘数字
 
-# # # 表情符号开关：Ctrl+.（菜单里也可以切）
-    - {accept: "Control+period", toggle: emoji, when: always}
+# # # 右 Ctrl/Shift 转成 F24，交给 schema_cycler 直接切下一个方案
+    - {accept: "Control+Shift_R", send: F24, when: always}
+    - {accept: "Shift+Control_R", send: F24, when: always}
 
 # # # 单手笔顺输入法用小键盘回车确认输入，即映射为空格键，能让数字编码变汉字上屏，单独输入时仍为回车换行。如果系统不认 KP_Enter，需要改为 Return。
     - {accept: KP_Enter, send: space, when: has_menu}
